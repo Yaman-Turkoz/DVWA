@@ -7,6 +7,7 @@ repo  = os.environ["REPO"]
 token = os.environ["GH_TOKEN"]
 env   = {**os.environ, "GH_TOKEN": token}
 
+print(env)
 # Read semgrep report
 with open("semgrep-report.json") as f:
     semgrep_data = json.load(f)
