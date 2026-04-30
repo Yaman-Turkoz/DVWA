@@ -97,7 +97,7 @@ else:
             capture_output=True,
             text=True,
         )
-
+        print(result_proc)
         issue_url = result_proc.stdout.strip()
         print(f"Issue created: {issue_url}")
 
