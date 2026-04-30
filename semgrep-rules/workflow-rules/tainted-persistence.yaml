@@ -1,0 +1,34 @@
+rules:
+  - id: incorrect-sanitization
+    mode: taint
+    languages: [php]
+    severity: WARNING
+
+    message: >
+      Data is being HTML-encoded before being stored in the database.
+      This is an anti-pattern and can lead to Stored XSS or double-encoding issues.
+      Store raw data and apply encoding at output time instead.
+
+    metadata:
+      category: security
+      cwe: "CWE-79"
+      confidence: HIGH
+
+    pattern-sources:
+      - pattern-either:
+          - pattern: $_GET[...]
+          - pattern: $_POST[...]
+          - pattern: $_REQUEST[...]
+          - pattern: $_COOKIE[...]
+
+    pattern-propagators:
+
+      - pattern: htmlspecialchars(...)
+      - pattern: htmlentities(...)
+      - pattern: json_encode(...)
+
+    pattern-sinks:
+      - pattern-either:
+          - pattern: mysqli_query(..., $QUERY)
+          - pattern: $PDO->query($QUERY)
+          - pattern: $PDO->exec($QUERY)

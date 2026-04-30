@@ -1,0 +1,50 @@
+rules:
+
+  - id: reflected-xss
+    mode: taint
+    languages: [php]
+    severity: ERROR
+    message: >
+      Possible XSS: user-controlled input reaches HTML output without sanitization.
+
+    pattern-sources:
+
+      - pattern: $_GET[...]
+      - pattern: $_POST[...]
+      - pattern: $_REQUEST[...]
+      - pattern: $_COOKIE[...]
+      - pattern: $_FILES[...]
+
+
+    pattern-sanitizers:
+      - pattern: htmlspecialchars(...)
+      - pattern: htmlentities(...)
+      - pattern: json_encode(...)
+
+
+    pattern-sinks:
+
+      - pattern: echo $SINK;
+      - pattern: echo($SINK);
+      - pattern: print $SINK;
+      - pattern: print($SINK);
+
+      - pattern: printf($SINK, ...);
+      - pattern: printf(..., $SINK);
+      - pattern: fprintf(..., $SINK, ...);
+      - pattern: vprintf($SINK, ...);
+
+      - pattern: print_r($SINK);
+      - pattern: die($SINK);
+      - pattern: exit($SINK);
+      - pattern: var_dump($SINK);
+      - pattern: var_dump($SINK, ...);
+
+
+      - patterns:
+        - pattern: $HTML .= $SINK;
+        - metavariable-regex:
+            metavariable: $HTML
+            regex: (?i).*(html|body|output|content|response|page|view).*
+
+

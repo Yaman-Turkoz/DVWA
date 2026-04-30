@@ -1,0 +1,71 @@
+env:
+  contexts:
+    - name: dvwa
+      urls:
+        - "http://dvwa/"
+      includePaths:
+        - "http://dvwa/.*"
+      excludePaths:
+        - "http://dvwa/logout.php"
+        - "http://dvwa/setup.php"
+        - "http://dvwa/vulnerabilities/csrf/.*"
+        - "http://dvwa/vulnerabilities/authbypass/.*"
+      sessionManagement:
+        method: cookie
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # Passive scan'i tamamen kapat
+  - type: passiveScan-config
+    parameters:
+      enableTags: false
+      disableAllRules: true
+
+  - type: spider
+    parameters:
+      context: dvwa
+      url: "http://dvwa/"
+      maxDuration: 5
+      maxDepth: 5
+
+  - type: activeScan-policy
+    parameters:
+      name: xss-only
+    policyDefinition:
+      defaultThreshold: "off"
+      rules:
+        - id: 40012
+          strength: high
+          threshold: low
+        - id: 40014
+          strength: high
+          threshold: low
+        - id: 40016
+          strength: high
+          threshold: low
+        - id: 40017
+          strength: high
+          threshold: low
+
+  - type: activeScan
+    parameters:
+      context: dvwa
+      policy: xss-only
+      maxScanDurationInMins: 15
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: dvwa-xss-report
+      reportTitle: "DVWA XSS Scan"
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk
+      reportFile: dvwa-xss-report-json
+      reportTitle: "DVWA XSS Scan"
