@@ -8,8 +8,8 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
 	$html .= '<pre>Hello ' . $_GET[ 'name' ] . '</pre>';
 }
 
-$name = $_GET["name"];
+$name2 = $_GET["name"];
 
-echo $name;
+echo $name2;
 
 ?>
