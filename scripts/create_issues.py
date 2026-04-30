@@ -7,7 +7,7 @@ repo  = os.environ["REPO"]
 token = os.environ["GH_TOKEN"]
 env   = {**os.environ, "GH_TOKEN": token}
 
-print(env)
+
 # Read semgrep report
 with open("semgrep-report.json") as f:
     semgrep_data = json.load(f)
@@ -97,7 +97,7 @@ else:
             capture_output=True,
             text=True,
         )
-        print(result_proc)
+        
         issue_url = result_proc.stdout.strip()
         print(f"Issue created: {issue_url}")
 
